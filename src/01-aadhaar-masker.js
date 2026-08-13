@@ -28,5 +28,9 @@
  *   // => "INVALID"
  */
 export function maskAadhaar(aadhaarNumber) {
-  // Your code here
+  if(typeof aadhaarNumber!=='string'||aadhaarNumber.trim().length===0||aadhaarNumber.length!==12||isNaN(aadhaarNumber)) return "INVALID"; //Instead of this isNaN check regex can be used...
+  let lastDigits=aadhaarNumber.slice(8);
+  let pattern="XXXX-";
+  let output=pattern.repeat(2)+lastDigits;
+  return output;
 }
