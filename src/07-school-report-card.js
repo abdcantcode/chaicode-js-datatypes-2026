@@ -41,5 +41,58 @@
  *   // => { name: "Priya", totalMarks: 63, percentage: 31.5, grade: "F", ... }
  */
 export function generateReportCard(student) {
-  // Your code here
+  if(Array.isArray(student)||student===null||typeof student!=='object'||typeof student.name!=='string'||student.name.trim().length===0||Array.isArray(student.marks)||
+student.marks===null||typeof student.marks!=='object'||Object.keys(student.marks).length===0) return null;
+for(let marks of Object.values(student.marks)){
+  if(marks<0||marks>100||typeof marks!=='number'||Number.isNaN(marks)) return null;
 }
+let {name,marks}=student;
+let totalMarks=Object.values(marks).reduce((acc,current)=>{
+  return acc+current;
+},0)
+let numSubjects=Object.keys(marks).length;
+let percentage=parseFloat(((totalMarks / (numSubjects * 100)) * 100).toFixed(2))
+let grade="F"
+if(percentage>=90) grade="A+";
+else if(percentage>=80) grade="A";
+else if(percentage>=70) grade="B";
+else if(percentage>=60) grade="C";
+else if(percentage>=40) grade="D";
+else grade="F";
+let subjectCount=Object.keys(marks).length;
+let passedSubjects=Object.entries(marks)
+.filter(([s,m])=>{
+  return m>=40;
+}).map(([s,m])=>s)
+
+let failedSubjects=Object.entries(marks)
+.filter(([s,m])=>{
+  return m<40;
+}).map(([s,m])=>s)
+
+let marksArray=Object.values(marks);
+let maxMarks=Math.max(...marksArray);
+let minMarks=Math.min(...marksArray);
+let highest=-Infinity;
+let lowest=Infinity;
+for(let [s,m] of Object.entries(marks)){
+  if(m===maxMarks) highest=s
+}
+for(let [s,m] of Object.entries(marks)){
+  if(m===minMarks) lowest=s;
+}
+return { name, totalMarks, percentage, grade,
+highestSubject:highest, lowestSubject:lowest,
+passedSubjects, failedSubjects,subjectCount}
+}
+
+  // let highestMarksArray=Object.entries(x).reduce((highest,current)=>{
+//   if(current[1]>highest[1]) highest=current;
+//     return highest
+// },['',-Infinity])
+// let highest=highestMarksArray[0];
+// let lowestMarksArray=Object.entries(x).reduce((lowest,current)=>{
+//   if(current[1]<lowest[1]) lowest=current;
+//     return lowest
+// },['',Infinity])
+// let lowest=lowestMarksArray[0]; You could have gone for this kinda approach as well...
