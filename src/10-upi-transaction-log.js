@@ -47,5 +47,53 @@
  *   //      frequentContact: "Swiggy", allAbove100: false, hasLargeTransaction: true }
  */
 export function analyzeUPITransactions(transactions) {
-  // Your code here
+  if(!Array.isArray(transactions)||transactions.length===0) return null;
+  let validTransactions=transactions.filter(t=>typeof t.amount==='number' && !Number.isNaN(t.amount) && t.amount>0 && (t.type==='credit'||t.type==='debit'));//Filtering out transactions
+  if(validTransactions.length===0) return null;
+  let totalCredit=validTransactions
+    .filter(t=>t.type==='credit')
+    .reduce((acc,current)=>{return acc+current.amount},0)
+  let totalDebit=validTransactions
+    .filter(t=>t.type==='debit')
+    .reduce((acc,current)=>{return acc+current.amount},0)
+  let netBalance=totalCredit-totalDebit
+  let transactionCount=validTransactions.length;
+  let sortedTransactionsArray=validTransactions
+    .sort((a,b)=>a.amount-b.amount);
+  let highestTransaction=sortedTransactionsArray.at(-1)
+  let totalTransactions=validTransactions
+    .reduce((acc,current)=>{return acc+current.amount},0);
+  let avgTransaction=Math.round(totalTransactions/transactionCount);
+  let allAbove100=validTransactions.every(t=>t.amount>100);
+  let hasLargeTransaction=validTransactions.some(t=>t.amount>=5000);
+  let categoryBreakdown={};
+  let frequentContactObject={}
+  for(let entry of validTransactions){
+    if(categoryBreakdown[entry['category']]){
+          categoryBreakdown[entry['category']]+=entry['amount'];
+    }
+    else{
+          categoryBreakdown[entry['category']]=entry['amount'];
+    }
+    if(frequentContactObject[entry['to']]){
+      frequentContactObject[entry['to']]+=1
+    }
+    else{
+      frequentContactObject[entry['to']]=1;
+    }
+  } //This makes an object of {"salary":3,"swiggy":2}..something like this but not sorted...
+  // let frequentContactArray=Object.entries(frequentContactObject)
+  //   .sort((a,b)=>a[1]-b[1]);
+  // let frequentContact=frequentContactArray.at(-1);
+  // let frequentContactOrg=frequentContact[0]; This is one approach but this doesn't handle the tie waala condition
+  let frequentContact=Object.entries(frequentContactObject) 
+    .reduce((acc,current)=>{
+      if(current[1]>acc[1]){
+        acc=current;
+      }
+      return acc;
+    },['',0])
+    let frequentContactOrg=frequentContact[0];
+
+  return { totalCredit, totalDebit, netBalance, transactionCount, avgTransaction, highestTransaction, categoryBreakdown, frequentContact:frequentContactOrg, allAbove100, hasLargeTransaction }
 }
