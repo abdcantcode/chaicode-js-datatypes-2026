@@ -46,5 +46,7 @@
  *   // grandTotal: 1000 + 0 + 50 - 150 = 900
  */
 export function buildZomatoOrder(cart, coupon) {
-  // Your code here
+    if(!Array.isArray(cart)||cart.length===0) return null;
+    let filteredArray=cart.filter(i=>i.qty>0);
+    let 
 }
