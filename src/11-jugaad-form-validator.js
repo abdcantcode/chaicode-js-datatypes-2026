@@ -62,5 +62,72 @@
  *   // => { isValid: false, errors: { name: "...", email: "...", ... } }
  */
 export function validateForm(formData) {
-  // Your code here
+  let { name, email, phone, age, pincode, state, agreeTerms } = formData;
+let errors = {};
+
+if (
+  typeof name !== "string" ||
+  name.trim() !== name ||
+  name.length < 2 ||
+  name.length > 50
+) {
+  errors["name"] = "Name must be 2-50 characters";
+} //Name validation...
+
+if (
+  typeof email !== "string" ||
+  email.trim().length === 0 ||
+  email.indexOf("@") !== email.lastIndexOf("@") ||
+  !email.includes(".") ||
+  !email.includes("@") ||
+  email.indexOf("@") > email.lastIndexOf(".")
+) {
+  errors["email"] = "Invalid email format";
+} //Email verification
+
+if (
+  typeof phone !== "string" ||
+  phone.length !== 10 ||
+  !["6", "7", "8", "9"].includes(phone[0]) ||
+  phone.split("").some((x) => !Number.isInteger(Number(x)))
+) {
+  errors["phone"] = "Invalid Indian phone number";
+} //Phone no verification
+
+if (
+  typeof pincode !== "string" ||
+  pincode.length !== 6 ||
+  pincode.startsWith("0") ||
+  pincode.split("").some((x) => !Number.isInteger(Number(x)))
+) {
+  errors["pincode"] = "Invalid Indian pincode";
+} //Pincode verification
+
+if (!Boolean(agreeTerms)) {
+  errors["agreeTerms"] = "Must agree to terms";
+} //agreeTerms verification
+
+if (typeof age === "string") {
+  age = Number(age);
+
+  if (isNaN(age) || !Number.isInteger(age) || age < 16 || age > 100) {
+    errors["age"] = "Age must be an integer between 16 and 100";
+  }
+} else if (typeof age === "number") {
+  if (isNaN(age) || !Number.isInteger(age) || age < 16 || age > 100) {
+    errors["age"] = "Age must be an integer between 16 and 100";
+  }
+} else {
+  errors["age"] = "Age must be an integer between 16 and 100";
+} //age verification
+
+state = state?.trim() ?? "";
+if (typeof state !== "string" || state.trim().length == 0)
+  errors["state"] = "State is required";
+//state verification
+
+let isValid = false;
+if (Object.keys(errors).length === 0) isValid = true;
+
+return { isValid, errors };
 }
